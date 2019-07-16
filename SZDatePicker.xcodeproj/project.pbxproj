@@ -14,6 +14,7 @@
 		580FDBDF22DDC445005B6CB2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 580FDBDD22DDC445005B6CB2 /* LaunchScreen.storyboard */; };
 		580FDBE222DDC445005B6CB2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 580FDBE122DDC445005B6CB2 /* main.m */; };
 		580FDBEC22DDC445005B6CB2 /* SZDatePickerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 580FDBEB22DDC445005B6CB2 /* SZDatePickerTests.m */; };
+		580FDBFA22DDC4E8005B6CB2 /* SZDatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 580FDBF922DDC4E8005B6CB2 /* SZDatePicker.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,8 @@
 		580FDBE722DDC445005B6CB2 /* SZDatePickerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SZDatePickerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		580FDBEB22DDC445005B6CB2 /* SZDatePickerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SZDatePickerTests.m; sourceTree = "<group>"; };
 		580FDBED22DDC445005B6CB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		580FDBF822DDC4E8005B6CB2 /* SZDatePicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SZDatePicker.h; sourceTree = "<group>"; };
+		580FDBF922DDC4E8005B6CB2 /* SZDatePicker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SZDatePicker.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,7 @@
 		580FDBD122DDC442005B6CB2 /* SZDatePicker */ = {
 			isa = PBXGroup;
 			children = (
+				580FDBF722DDC4CA005B6CB2 /* src */,
 				580FDBD222DDC442005B6CB2 /* AppDelegate.h */,
 				580FDBD322DDC442005B6CB2 /* AppDelegate.m */,
 				580FDBD522DDC442005B6CB2 /* ViewController.h */,
@@ -109,6 +113,15 @@
 				580FDBE122DDC445005B6CB2 /* main.m */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		580FDBF722DDC4CA005B6CB2 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				580FDBF822DDC4E8005B6CB2 /* SZDatePicker.h */,
+				580FDBF922DDC4E8005B6CB2 /* SZDatePicker.m */,
+			);
+			path = src;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -213,6 +226,7 @@
 			files = (
 				580FDBD722DDC442005B6CB2 /* ViewController.m in Sources */,
 				580FDBE222DDC445005B6CB2 /* main.m in Sources */,
+				580FDBFA22DDC4E8005B6CB2 /* SZDatePicker.m in Sources */,
 				580FDBD422DDC442005B6CB2 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -373,7 +387,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2484Z5XMVT;
-				INFOPLIST_FILE = SZDatePicker/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/SZDatePicker/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -390,7 +404,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2484Z5XMVT;
-				INFOPLIST_FILE = SZDatePicker/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/SZDatePicker/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

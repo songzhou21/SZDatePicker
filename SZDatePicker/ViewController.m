@@ -7,8 +7,11 @@
 //
 
 #import "ViewController.h"
+#import "SZDatePicker.h"
 
 @interface ViewController ()
+
+@property (nonatomic) SZDatePicker *picker;
 
 @end
 
@@ -16,7 +19,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    _picker = [SZDatePicker new];
+    [self.view addSubview:_picker];
+    
+    _picker.translatesAutoresizingMaskIntoConstraints = NO;
+    [NSLayoutConstraint activateConstraints:@[
+                                              [_picker.leftAnchor constraintEqualToAnchor:self.view.leftAnchor],
+                                              [_picker.rightAnchor constraintEqualToAnchor:self.view.rightAnchor],
+                                              [_picker.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor],
+                                              ]];
 }
 
 
