@@ -85,11 +85,7 @@
 				580FDBD322DDC442005B6CB2 /* AppDelegate.m */,
 				580FDBD522DDC442005B6CB2 /* ViewController.h */,
 				580FDBD622DDC442005B6CB2 /* ViewController.m */,
-				580FDBD822DDC442005B6CB2 /* Main.storyboard */,
-				580FDBDB22DDC445005B6CB2 /* Assets.xcassets */,
-				580FDBDD22DDC445005B6CB2 /* LaunchScreen.storyboard */,
-				580FDBE022DDC445005B6CB2 /* Info.plist */,
-				580FDBE122DDC445005B6CB2 /* main.m */,
+				580FDBF622DDC46D005B6CB2 /* Supporting Files */,
 			);
 			path = SZDatePicker;
 			sourceTree = "<group>";
@@ -101,6 +97,18 @@
 				580FDBED22DDC445005B6CB2 /* Info.plist */,
 			);
 			path = SZDatePickerTests;
+			sourceTree = "<group>";
+		};
+		580FDBF622DDC46D005B6CB2 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				580FDBD822DDC442005B6CB2 /* Main.storyboard */,
+				580FDBDB22DDC445005B6CB2 /* Assets.xcassets */,
+				580FDBDD22DDC445005B6CB2 /* LaunchScreen.storyboard */,
+				580FDBE022DDC445005B6CB2 /* Info.plist */,
+				580FDBE122DDC445005B6CB2 /* main.m */,
+			);
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
