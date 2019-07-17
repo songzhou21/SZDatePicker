@@ -31,7 +31,10 @@ typedef NS_ENUM(NSInteger, SZDatePickerMode) {
 /// default is current date when picker created.
 @property (nonatomic) NSDate *date;
 
+/// date is stored in dateComponents
 @property (nonatomic) NSDateComponents *dateComponents;
+
+- (void)setDate:(NSDate *)date animated:(BOOL)animated;
 
 @end
 

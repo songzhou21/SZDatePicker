@@ -48,6 +48,12 @@
     return self;
 }
 
+- (void)setDate:(NSDate *)date animated:(BOOL)animated {
+    self.dateComponents = [self.calendar componentsInTimeZone:self.calendar.timeZone fromDate:date];
+    
+    [self _reloadAnimated:animated];
+}
+
 #pragma mark - UIPickerViewDataSource
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
     if (self.datePickerMode == SZDatePickerModeMonth) {
@@ -274,8 +280,6 @@
 
 - (void)setDateComponents:(NSDateComponents *)dateComponents {
     _dateComponents = dateComponents;
-    
-    [self _reloadAnimated:YES];
 }
 
 #pragma mark - Private

@@ -42,9 +42,12 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    UIBarButtonItem *selectMode = [[UIBarButtonItem alloc] initWithTitle:@"select mode" style:UIBarButtonItemStylePlain target:self action:@selector(selectMode)];
+    UIBarButtonItem *selectMode = [[UIBarButtonItem alloc] initWithTitle:@"select" style:UIBarButtonItemStylePlain target:self action:@selector(selectMode)];
+    
+    UIBarButtonItem *changeDate = [[UIBarButtonItem alloc] initWithTitle:@"change" style:UIBarButtonItemStylePlain target:self action:@selector(change)];
+    
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"date" style:UIBarButtonItemStylePlain target:self action:@selector(getDate)];
-    self.navigationItem.leftBarButtonItem = selectMode;
+    self.navigationItem.leftBarButtonItems = @[selectMode, changeDate];
 }
 
 - (void)getDate {
@@ -74,6 +77,10 @@
    
     
     [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)change {
+    [self.picker setDate:[self.picker.date dateByAddingTimeInterval:3600*4] animated:YES];
 }
 
 - (SZDatePickerMode)modelForString:(NSString *)mode {
