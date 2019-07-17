@@ -103,51 +103,44 @@
 
 #pragma mark - UIPickerViewDelegate
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    NSDateComponents *components = [self displayDateComponents];
+    NSString *format;
+    
     if (self.datePickerMode == SZDatePickerModeMonth) {
-        return self.monthList[row].stringValue;
+        components.month = self.monthList[row].integerValue;
+        self.dateFormatter.dateFormat = @"LLL";
+        return [self.dateFormatter stringFromDate:components.date];
     }
     
+    
     if (component == 0) {
-        return self.yearList[row].stringValue;
+        components.year = self.yearList[row].integerValue;
+        components.yearForWeekOfYear = components.year;
+        format = @"y";
+        if (self.datePickerMode == SZDatePickerModeDateAndTime) {
+            self.dateFormatter.dateFormat = format;
+        } else {
+            self.dateFormatter.dateFormat = [NSDateFormatter dateFormatFromTemplate:format options:0 locale:self.calendar.locale];
+        }
     } else if (component == 1){
-        return self.monthList[row].stringValue;
+        components.month = self.monthList[row].integerValue;
+        format = @"LLL";
+        self.dateFormatter.dateFormat = [NSDateFormatter dateFormatFromTemplate:format options:0 locale:self.calendar.locale];
     } else if (component == 2) {
         NSArray<NSNumber *> *ret = [self _makeDaysInDate:self.date];
-        return ret[row].stringValue;
+        components.day = ret[row].integerValue;
+        format = @"d";
+        self.dateFormatter.dateFormat = [NSDateFormatter dateFormatFromTemplate:format options:0 locale:self.calendar.locale];
     } else if (component == 3) {
-        return self.hourList[row].stringValue;
+        components.hour = self.hourList[row].integerValue;
+        self.dateFormatter.dateFormat = @"H";
     } else if (component == 4) {
-        return self.minuteList[row].stringValue;
+        components.minute = self.minuteList[row].integerValue;
+        self.dateFormatter.dateFormat = @"m";
     }
-    
 
-    return nil;
-}
-
-
-- (void)_updateForRow:(NSInteger)row inComponent:(NSInteger)component mode:(SZDatePickerMode)mode {
-     if (self.datePickerMode == SZDatePickerModeMonth) {
-         if (component == 0) {
-             [self _updateComponents:self.dateComponents year:-1 month:row+1 day:-1];
-         }
-         return;
-     }
-    
-    
-    if (component == 0) {
-        NSInteger year = self.yearList[row].integerValue;
-        [self _updateComponents:self.dateComponents year:year month:-1 day:-1];
-    } else if (component == 1){
-        [self _updateComponents:self.dateComponents year:-1 month:row+1 day:-1];
-    } else if (component == 2) {
-        [self _updateComponents:self.dateComponents year:-1 month:-1 day:row+1];
-    } else if (component == 3) {
-        NSInteger hour = self.hourList[row].integerValue;
-        [self _updateComponents:self.dateComponents year:-1 month:-1 day:-1 hour:hour minute:-1];
-    } else if (component == 4) {
-        NSInteger minute = self.minuteList[row].integerValue;
-        [self _updateComponents:self.dateComponents year:-1 month:-1 day:-1 hour:-1 minute:minute];
-    }
+   
+    return [self.dateFormatter stringFromDate:components.date];
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
@@ -175,6 +168,8 @@
 - (NSDateFormatter *)dateFormatter {
     if (!_dateFormatter) {
         _dateFormatter = [NSDateFormatter new];
+        _dateFormatter.calendar = self.calendar;
+        _dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:[NSLocale preferredLanguages].firstObject];
     }
     
     return _dateFormatter;
@@ -250,6 +245,14 @@
     }
     
     return _hourMinuteFormatter;
+}
+
+- (NSDateComponents *)displayDateComponents {
+    NSDateComponents *components = [self.dateComponents copy];
+    
+    components.day = 1; // prevent overflow when changed month
+    
+    return components;
 }
 
 #pragma mark - Setter
@@ -358,6 +361,31 @@
     }
     
     components.day = range.length;
+}
+
+- (void)_updateForRow:(NSInteger)row inComponent:(NSInteger)component mode:(SZDatePickerMode)mode {
+    if (self.datePickerMode == SZDatePickerModeMonth) {
+        if (component == 0) {
+            [self _updateComponents:self.dateComponents year:-1 month:row+1 day:-1];
+        }
+        return;
+    }
+    
+    
+    if (component == 0) {
+        NSInteger year = self.yearList[row].integerValue;
+        [self _updateComponents:self.dateComponents year:year month:-1 day:-1];
+    } else if (component == 1){
+        [self _updateComponents:self.dateComponents year:-1 month:row+1 day:-1];
+    } else if (component == 2) {
+        [self _updateComponents:self.dateComponents year:-1 month:-1 day:row+1];
+    } else if (component == 3) {
+        NSInteger hour = self.hourList[row].integerValue;
+        [self _updateComponents:self.dateComponents year:-1 month:-1 day:-1 hour:hour minute:-1];
+    } else if (component == 4) {
+        NSInteger minute = self.minuteList[row].integerValue;
+        [self _updateComponents:self.dateComponents year:-1 month:-1 day:-1 hour:-1 minute:minute];
+    }
 }
 
 - (void)_reloadAnimated:(BOOL)animated {
