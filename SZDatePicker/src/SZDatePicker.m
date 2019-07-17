@@ -347,7 +347,7 @@
 
 - (void)_updateDateComponentsUnitDayIfNeeded:(NSDateComponents *)components {
     NSDateComponents *c = [components copy];
-    c.day = 1;
+    c.day = 1; // make the date valid
     
     NSRange range = [self.calendar rangeOfUnit:NSCalendarUnitDay
                                         inUnit:NSCalendarUnitMonth
