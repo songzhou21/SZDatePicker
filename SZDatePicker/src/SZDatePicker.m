@@ -301,17 +301,13 @@
         c.year = year;
         c.yearForWeekOfYear = year;
         
-        if (![self _inMonthRangeForDay:components.day date:c.date]) {
-            c.day = 1;
-        }
+        [self _updateDateComponentsUnitDayIfNeeded:c];
     }
     
     if (month > 0) {
         c.month = month;
         
-        if (![self _inMonthRangeForDay:components.day date:c.date]) {
-            c.day = 1;
-        }
+        [self _updateDateComponentsUnitDayIfNeeded:c];
     }
     
     if (day > 0) {
@@ -349,12 +345,19 @@
     return [self _makeRangeOfUnit:NSCalendarUnitHour inUnit:NSCalendarUnitDay forDate:date];
 }
 
-- (BOOL)_inMonthRangeForDay:(NSInteger)day date:(NSDate *)date {
+- (void)_updateDateComponentsUnitDayIfNeeded:(NSDateComponents *)components {
+    NSDateComponents *c = [components copy];
+    c.day = 1;
+    
     NSRange range = [self.calendar rangeOfUnit:NSCalendarUnitDay
                                         inUnit:NSCalendarUnitMonth
-                                       forDate:date];
+                                       forDate:c.date];
     
-    return NSLocationInRange(day, range);
+    if (NSLocationInRange(components.day, range)) {
+        return;
+    }
+    
+    components.day = range.length;
 }
 
 - (void)_reloadAnimated:(BOOL)animated {

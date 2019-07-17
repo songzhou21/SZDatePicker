@@ -22,7 +22,7 @@
 
     self.view.backgroundColor = [UIColor whiteColor];
     _picker = [SZDatePicker new];
-    _picker.datePickerMode = SZDatePickerModeYearAndMonth;
+    _picker.datePickerMode = SZDatePickerModeDateAndTime;
     [self.view addSubview:_picker];
     
     _picker.translatesAutoresizingMaskIntoConstraints = NO;
