@@ -20,8 +20,6 @@
 @property (nonatomic, copy) NSArray<NSNumber *> *hourList;
 @property (nonatomic, copy) NSArray<NSNumber *> *minuteList;
 
-@property (nonatomic) NSNumberFormatter *hourMinuteFormatter;
-
 @end
 
 @implementation SZDatePicker
@@ -241,16 +239,6 @@
     }
     
     return _minuteList;
-}
-
-- (NSNumberFormatter *)hourMinuteFormatter {
-    if (!_hourMinuteFormatter) {
-        _hourMinuteFormatter = [NSNumberFormatter new];
-        _hourMinuteFormatter.minimumIntegerDigits = 2;
-        _hourMinuteFormatter.maximumIntegerDigits = 2;
-    }
-    
-    return _hourMinuteFormatter;
 }
 
 - (NSDateComponents *)displayDateComponents {
