@@ -17,7 +17,7 @@ typedef NS_ENUM(NSInteger, SZDatePickerMode) {
     SZDatePickerModeDateAndTime,
     /// 2019|07
     SZDatePickerModeYearAndMonth,
-    /// 07
+    /// November
     SZDatePickerModeMonth,
 };
 
@@ -30,6 +30,8 @@ typedef NS_ENUM(NSInteger, SZDatePickerMode) {
 
 /// default is current date when picker created.
 @property (nonatomic) NSDate *date;
+
+@property (nonatomic) NSDateComponents *dateComponents;
 
 @end
 
