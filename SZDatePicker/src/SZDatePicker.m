@@ -7,6 +7,7 @@
 //
 
 #import "SZDatePicker.h"
+#import "NSArray+SZExt.h"
 
 @interface SZDatePicker () <UIPickerViewDelegate, UIPickerViewDataSource>
 
@@ -19,6 +20,9 @@
 @property (nonatomic, copy) NSArray<NSNumber *> *monthList;
 @property (nonatomic, copy) NSArray<NSNumber *> *hourList;
 @property (nonatomic, copy) NSArray<NSNumber *> *minuteList;
+
+@property (nonatomic) NSDateComponents *minimumDateComponents;
+@property (nonatomic) NSDateComponents *maxmumDateComponents;
 
 @end
 
@@ -69,7 +73,7 @@
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
     if (self.datePickerMode == SZDatePickerModeMonth) {
-        return self.calendar.monthSymbols.count;
+        return self.monthList.count;
     } else if (self.datePickerMode == SZDatePickerModeYearAndMonth) {
         if (component == 0) {
             return self.yearList.count;
@@ -80,11 +84,9 @@
         if (component == 0) {
             return self.yearList.count;
         } else if (component == 1){
-            return self.calendar.monthSymbols.count;
+            return self.monthList.count;
         } else {
-            return [self.calendar rangeOfUnit:NSCalendarUnitDay
-                                inUnit:NSCalendarUnitMonth
-                               forDate:self.date].length;
+            return [self dayListForDate:self.date].count;
         }
     } else if (self.datePickerMode == SZDatePickerModeDateAndTime) {
         if (component == 0) {
@@ -92,9 +94,7 @@
         } else if (component == 1){
             return self.monthList.count;
         } else if (component == 2) {
-            return [self.calendar rangeOfUnit:NSCalendarUnitDay
-                                       inUnit:NSCalendarUnitMonth
-                                      forDate:self.date].length;
+            return [self dayListForDate:self.date].count;
         } else if (component == 3) {
             return self.hourList.count;
         } else if (component == 4) {
@@ -117,7 +117,7 @@
     }
     
     
-    if (component == 0) {
+    if (component == 0) { // year
         components.year = self.yearList[row].integerValue;
         components.yearForWeekOfYear = components.year;
         format = @"y";
@@ -126,12 +126,12 @@
         } else {
             self.dateFormatter.dateFormat = [NSDateFormatter dateFormatFromTemplate:format options:0 locale:self.calendar.locale];
         }
-    } else if (component == 1){
+    } else if (component == 1){ // month
         components.month = self.monthList[row].integerValue;
         format = @"LLL";
         self.dateFormatter.dateFormat = [NSDateFormatter dateFormatFromTemplate:format options:0 locale:self.calendar.locale];
-    } else if (component == 2) {
-        NSArray<NSNumber *> *ret = [self _makeDaysInDate:self.date];
+    } else if (component == 2) { // day
+        NSArray<NSNumber *> *ret = [self dayListForDate:self.date];
         components.day = ret[row].integerValue;
         format = @"d";
         self.dateFormatter.dateFormat = [NSDateFormatter dateFormatFromTemplate:format options:0 locale:self.calendar.locale];
@@ -200,6 +200,7 @@
     return self.dateComponents.date;
 }
 
+#pragma mark - Component
 - (NSArray<NSNumber *> *)yearList {
     if (!_yearList) {
         NSInteger pastYear = [self.calendar componentsInTimeZone:self.timeZone fromDate:[NSDate distantPast]].year;
@@ -213,29 +214,117 @@
         
         _yearList = ret;
     }
-   
+
     return _yearList;
 }
 
 - (NSArray<NSNumber *> *)monthList {
-    if (!_monthList) {
-        _monthList = [self _makeRangeOfUnit:NSCalendarUnitMonth inUnit:NSCalendarUnitYear forDate:self.date];
+    _monthList = [self _makeRangeOfUnit:NSCalendarUnitMonth inUnit:NSCalendarUnitYear forDate:self.date];
+
+    if (_datePickerMode == SZDatePickerModeMonth) {
+        return _monthList;
+    }
+    
+    if (_minimumDateComponents) {
+        NSInteger year = _dateComponents.year;
+        if (year == _minimumDateComponents.year) {
+            NSInteger month = _minimumDateComponents.month;
+            _monthList = [_monthList sz_filter:^BOOL(NSNumber *obj) {
+                return obj.integerValue >= month;
+            }];
+        }
+    }
+    
+    if (_maxmumDateComponents) {
+        NSInteger year = _dateComponents.year;
+        if (year == _maxmumDateComponents.year) {
+            NSInteger month = _maxmumDateComponents.month;
+            _monthList = [_monthList sz_filter:^BOOL(NSNumber *obj) {
+                return obj.integerValue <= month;
+            }];
+        }
     }
     
     return _monthList;
 }
 
-- (NSArray<NSNumber *> *)hourList {
-    if (!_hourList) {
-        _hourList = [self _makeRangeOfUnit:NSCalendarUnitHour inUnit:NSCalendarUnitDay forDate:self.date];
+
+- (NSArray<NSNumber *> *)dayListForDate:(NSDate *)date {
+    __auto_type list = [self _makeRangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:date];
+    
+    if (_minimumDateComponents) {
+        if (_dateComponents.year == _minimumDateComponents.year &&
+            _dateComponents.month == _minimumDateComponents.month) {
+            
+            list = [list sz_filter:^BOOL(NSNumber *obj) {
+                return obj.integerValue >= self.minimumDateComponents.day;
+            }];
+        }
     }
+    
+    if (_maxmumDateComponents) {
+        if (_dateComponents.year == _maxmumDateComponents.year &&
+            _dateComponents.month == _maxmumDateComponents.month) {
+            list = [list sz_filter:^BOOL(NSNumber *obj) {
+                return obj.integerValue <= self.maxmumDateComponents.day;
+            }];
+        }
+    }
+    
+    return list;
+}
+
+
+- (NSArray<NSNumber *> *)hourList {
+    _hourList = [self _makeRangeOfUnit:NSCalendarUnitHour inUnit:NSCalendarUnitDay forDate:self.date];
+    
+    if (_minimumDateComponents) {
+        if (_dateComponents.year == _minimumDateComponents.year &&
+            _dateComponents.month == _minimumDateComponents.month &&
+            _dateComponents.day == _minimumDateComponents.day) {
+            _hourList = [_hourList sz_filter:^BOOL(NSNumber *obj) {
+                return obj.integerValue >= self.minimumDateComponents.hour;
+            }];
+        }
+    }
+    
+    if (_maxmumDateComponents) {
+        if (_dateComponents.year == _maxmumDateComponents.year &&
+            _dateComponents.month == _maxmumDateComponents.month &&
+            _dateComponents.day == _maxmumDateComponents.day) {
+            _hourList = [_hourList sz_filter:^BOOL(NSNumber *obj) {
+                return obj.integerValue <= self.maxmumDateComponents.hour;
+            }];
+        }
+    }
+    
     
     return _hourList;
 }
 
 - (NSArray<NSNumber *> *)minuteList {
-    if (!_minuteList) {
-        _minuteList = [self _makeRangeOfUnit:NSCalendarUnitMinute inUnit:NSCalendarUnitHour forDate:self.date];
+    _minuteList = [self _makeRangeOfUnit:NSCalendarUnitMinute inUnit:NSCalendarUnitHour forDate:self.date];
+    
+    if (_minimumDateComponents) {
+        if (_dateComponents.year == _minimumDateComponents.year &&
+            _dateComponents.month == _minimumDateComponents.month &&
+            _dateComponents.day == _minimumDateComponents.day &&
+            _dateComponents.hour == _minimumDateComponents.hour) {
+            _minuteList = [_minuteList sz_filter:^BOOL(NSNumber *obj) {
+                return obj.integerValue >= self.minimumDateComponents.minute;
+            }];
+        }
+    }
+    
+    if (_maxmumDateComponents) {
+        if (_dateComponents.year == _maxmumDateComponents.year &&
+            _dateComponents.month == _maxmumDateComponents.month &&
+            _dateComponents.day == _maxmumDateComponents.day &&
+            _dateComponents.hour == _maxmumDateComponents.hour) {
+            _minuteList = [_minuteList sz_filter:^BOOL(NSNumber *obj) {
+                return obj.integerValue <= self.maxmumDateComponents.minute;
+            }];
+        }
     }
     
     return _minuteList;
@@ -249,6 +338,21 @@
     return components;
 }
 
+- (void)updateDateRangeWithMinimumDate:(nullable NSDate *)minimumDate maximumDate:(nullable NSDate *)maximumDate {
+    // update year list
+    NSInteger smallYear = [self.calendar component:NSCalendarUnitYear fromDate:minimumDate ?: [NSDate distantPast]];
+    NSInteger largeYear = [self.calendar  component:NSCalendarUnitYear fromDate:maximumDate ?: [NSDate distantFuture]];
+    NSInteger capacity = largeYear-smallYear+1;
+    
+    NSMutableArray *ret = [NSMutableArray arrayWithCapacity:capacity];
+    for (NSInteger i = 0; i < capacity; i++) {
+        ret[i] = @(smallYear++);
+    }
+    
+    _yearList = ret;
+    
+    
+}
 #pragma mark - Setter
 - (void)setCalendar:(NSCalendar *)calendar {
     if (calendar == nil) {
@@ -268,6 +372,30 @@
 
 - (void)setDateComponents:(NSDateComponents *)dateComponents {
     _dateComponents = dateComponents;
+}
+
+- (void)setMinimumDate:(NSDate *)minimumDate {
+    if (_maximumDate && [minimumDate compare:_maximumDate] == NSOrderedDescending) {
+        return;
+    }
+    
+    _minimumDate = minimumDate;
+    _minimumDateComponents = [self.calendar componentsInTimeZone:self.timeZone fromDate:_minimumDate];
+    
+    [self updateDateRangeWithMinimumDate:_minimumDate maximumDate:_maximumDate];
+    [self _reloadAnimated:NO];
+}
+
+- (void)setMaximumDate:(NSDate *)maximumDate {
+    if (_minimumDate && [maximumDate compare:_minimumDate] == NSOrderedAscending) {
+        return;
+    }
+    
+    _maximumDate = maximumDate;
+    _maxmumDateComponents = [self.calendar componentsInTimeZone:self.timeZone fromDate:_maximumDate];
+    
+    [self updateDateRangeWithMinimumDate:_minimumDate maximumDate:_maximumDate];
+    [self _reloadAnimated:NO];
 }
 
 #pragma mark - Private
@@ -368,9 +496,9 @@
         NSInteger year = self.yearList[row].integerValue;
         [self _updateComponents:self.dateComponents year:year month:-1 day:-1];
     } else if (component == 1){
-        [self _updateComponents:self.dateComponents year:-1 month:row+1 day:-1];
+        [self _updateComponents:self.dateComponents year:-1 month:self.monthList[row].integerValue day:-1];
     } else if (component == 2) {
-        [self _updateComponents:self.dateComponents year:-1 month:-1 day:row+1];
+        [self _updateComponents:self.dateComponents year:-1 month:-1 day:[self dayListForDate:self.date][row].integerValue];
     } else if (component == 3) {
         NSInteger hour = self.hourList[row].integerValue;
         [self _updateComponents:self.dateComponents year:-1 month:-1 day:-1 hour:hour minute:-1];
@@ -380,34 +508,48 @@
     }
 }
 
+- (void)_selectedRow:(NSInteger)row inComponent:(NSInteger)component animated:(BOOL)animated {
+    if (row == NSNotFound) {
+        return;
+    }
+    
+    [_pickerView selectRow:row inComponent:component animated:animated];
+}
+
 - (void)_reloadAnimated:(BOOL)animated {
     [_pickerView reloadAllComponents];
     if (_datePickerMode == SZDatePickerModeMonth) {
-        [_pickerView selectRow:self.dateComponents.month-1 inComponent:0 animated:animated];
+        [self _selectedRow:[self.monthList indexOfObject:@(self.dateComponents.month)] inComponent:0 animated:animated];
     } else if (_datePickerMode == SZDatePickerModeYearAndMonth) {
         NSInteger yearIndex = [self.yearList indexOfObject:@(self.dateComponents.year)];
-        [_pickerView selectRow:yearIndex inComponent:0 animated:animated];
-        [_pickerView selectRow:self.dateComponents.month-1 inComponent:1 animated:animated];
+        NSInteger monthIndex = [self.monthList indexOfObject:@(self.dateComponents.month)];
+        
+        [self _selectedRow:yearIndex inComponent:0 animated:animated];
+        [self _selectedRow:monthIndex inComponent:1 animated:animated];
     } else if (_datePickerMode == SZDatePickerModeDate) {
-        NSArray<NSNumber *> *days = [self _makeDaysInDate:self.date];
+        NSArray<NSNumber *> *days = [self dayListForDate:self.date];
         
         NSInteger yearIndex = [self.yearList indexOfObject:@(self.dateComponents.year)];
-        [_pickerView selectRow:yearIndex inComponent:0 animated:animated];
-        [_pickerView selectRow:self.dateComponents.month-1 inComponent:1 animated:animated];
-        [_pickerView selectRow:[days indexOfObject:@(self.dateComponents.day)] inComponent:2 animated:animated];
+        NSInteger monthIndex = [self.monthList indexOfObject:@(self.dateComponents.month)];
+        
+        [self _selectedRow:yearIndex inComponent:0 animated:animated];
+        [self _selectedRow:monthIndex inComponent:1 animated:animated];
+        [self _selectedRow:[days indexOfObject:@(self.dateComponents.day)] inComponent:2 animated:animated];
     } else if (_datePickerMode == SZDatePickerModeDateAndTime) {
         NSDate *date = self.date;
-        NSArray<NSNumber *> *days = [self _makeDaysInDate:date];
+        NSArray<NSNumber *> *days = [self dayListForDate:date];
         __auto_type hours = self.hourList;
         __auto_type miniuts = self.minuteList;
         
         NSInteger yearIndex = [self.yearList indexOfObject:@(self.dateComponents.year)];
-        [_pickerView selectRow:yearIndex inComponent:0 animated:animated];
-        [_pickerView selectRow:self.dateComponents.month-1 inComponent:1 animated:animated];
-        [_pickerView selectRow:[days indexOfObject:@(self.dateComponents.day)] inComponent:2 animated:animated];
+        NSInteger monthIndex = [self.monthList indexOfObject:@(self.dateComponents.month)];
         
-        [_pickerView selectRow:[hours indexOfObject:@(self.dateComponents.hour)] inComponent:3 animated:NO];
-        [_pickerView selectRow:[miniuts indexOfObject:@(self.dateComponents.minute)] inComponent:4 animated:NO];
+        [self _selectedRow:yearIndex inComponent:0 animated:animated];
+        [self _selectedRow:monthIndex inComponent:1 animated:animated];
+        [self _selectedRow:[days indexOfObject:@(self.dateComponents.day)] inComponent:2 animated:animated];
+        
+        [self _selectedRow:[hours indexOfObject:@(self.dateComponents.hour)] inComponent:3 animated:animated];
+        [self _selectedRow:[miniuts indexOfObject:@(self.dateComponents.minute)] inComponent:4 animated:animated];
     }
 }
 @end

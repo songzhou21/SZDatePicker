@@ -15,6 +15,7 @@
 		580FDBE222DDC445005B6CB2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 580FDBE122DDC445005B6CB2 /* main.m */; };
 		580FDBEC22DDC445005B6CB2 /* SZDatePickerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 580FDBEB22DDC445005B6CB2 /* SZDatePickerTests.m */; };
 		580FDBFA22DDC4E8005B6CB2 /* SZDatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 580FDBF922DDC4E8005B6CB2 /* SZDatePicker.m */; };
+		58AF9B2322DF021F00ABB410 /* NSArray+SZExt.m in Sources */ = {isa = PBXBuildFile; fileRef = 58AF9B2222DF021F00ABB410 /* NSArray+SZExt.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,8 @@
 		580FDBED22DDC445005B6CB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		580FDBF822DDC4E8005B6CB2 /* SZDatePicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SZDatePicker.h; sourceTree = "<group>"; };
 		580FDBF922DDC4E8005B6CB2 /* SZDatePicker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SZDatePicker.m; sourceTree = "<group>"; };
+		58AF9B2122DF021F00ABB410 /* NSArray+SZExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+SZExt.h"; sourceTree = "<group>"; };
+		58AF9B2222DF021F00ABB410 /* NSArray+SZExt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+SZExt.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +123,8 @@
 			children = (
 				580FDBF822DDC4E8005B6CB2 /* SZDatePicker.h */,
 				580FDBF922DDC4E8005B6CB2 /* SZDatePicker.m */,
+				58AF9B2122DF021F00ABB410 /* NSArray+SZExt.h */,
+				58AF9B2222DF021F00ABB410 /* NSArray+SZExt.m */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -224,6 +229,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58AF9B2322DF021F00ABB410 /* NSArray+SZExt.m in Sources */,
 				580FDBD722DDC442005B6CB2 /* ViewController.m in Sources */,
 				580FDBE222DDC445005B6CB2 /* main.m in Sources */,
 				580FDBFA22DDC4E8005B6CB2 /* SZDatePicker.m in Sources */,

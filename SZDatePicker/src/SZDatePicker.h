@@ -32,9 +32,11 @@ typedef NS_ENUM(NSInteger, SZDatePickerMode) {
 @property (nonatomic) NSDate *date;
 
 /// specify min/max date range. default is nil. When min > max, the values are ignored.
+/// SZDatePickerModeMonth ignored
 @property (nullable, nonatomic) NSDate *minimumDate;
 
 /// default is nil
+/// SZDatePickerModeMonth ignored
 @property (nullable, nonatomic) NSDate *maximumDate;
 
 /// date is stored in dateComponents

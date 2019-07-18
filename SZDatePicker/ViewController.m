@@ -23,6 +23,24 @@
     self.view.backgroundColor = [UIColor whiteColor];
     _picker = [SZDatePicker new];
     _picker.datePickerMode = SZDatePickerModeDateAndTime;
+    
+    NSDateComponents *components = [[NSDateComponents alloc] init];
+    components.year = 2018;
+    components.month = 6;
+    components.day = 10;
+    components.hour = 13;
+    components.minute = 10;
+    
+    NSDateComponents *maxComponents = [[NSDateComponents alloc] init];
+    maxComponents.year = 2021;
+    maxComponents.month = 8;
+    maxComponents.day = 20;
+    maxComponents.hour = 14;
+    maxComponents.minute = 20;
+    
+    _picker.minimumDate = [_picker.calendar dateFromComponents:components];
+    _picker.maximumDate = [_picker.calendar dateFromComponents:maxComponents];
+    
     [self.view addSubview:_picker];
     
     _picker.translatesAutoresizingMaskIntoConstraints = NO;
