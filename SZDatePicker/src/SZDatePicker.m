@@ -67,7 +67,7 @@
     } else if (self.datePickerMode == SZDatePickerModeDateAndTime) {
         return 5;
     }
-
+    
     return 0;
 }
 
@@ -137,13 +137,13 @@
         self.dateFormatter.dateFormat = [NSDateFormatter dateFormatFromTemplate:format options:0 locale:self.calendar.locale];
     } else if (component == 3) {
         components.hour = self.hourList[row].integerValue;
-        self.dateFormatter.dateFormat = @"H";
+        self.dateFormatter.dateFormat = @"HH";
     } else if (component == 4) {
         components.minute = self.minuteList[row].integerValue;
-        self.dateFormatter.dateFormat = @"m";
+        self.dateFormatter.dateFormat = @"mm";
     }
-
-   
+    
+    
     return [self.dateFormatter stringFromDate:components.date];
 }
 
@@ -214,13 +214,13 @@
         
         _yearList = ret;
     }
-
+    
     return _yearList;
 }
 
 - (NSArray<NSNumber *> *)monthList {
     _monthList = [self _makeRangeOfUnit:NSCalendarUnitMonth inUnit:NSCalendarUnitYear forDate:self.date];
-
+    
     if (_datePickerMode == SZDatePickerModeMonth) {
         return _monthList;
     }
@@ -380,8 +380,9 @@
     }
     
     _minimumDate = minimumDate;
-    _minimumDateComponents = [self.calendar componentsInTimeZone:self.timeZone fromDate:_minimumDate];
+    _minimumDateComponents = _minimumDate == nil ? nil : [self.calendar componentsInTimeZone:self.timeZone fromDate:_minimumDate];
     
+    [self updateDateComponentsIfNeeded];
     [self updateDateRangeWithMinimumDate:_minimumDate maximumDate:_maximumDate];
     [self _reloadAnimated:NO];
 }
@@ -392,8 +393,9 @@
     }
     
     _maximumDate = maximumDate;
-    _maxmumDateComponents = [self.calendar componentsInTimeZone:self.timeZone fromDate:_maximumDate];
+    _maxmumDateComponents = _maximumDate == nil ? nil : [self.calendar componentsInTimeZone:self.timeZone fromDate:_maximumDate];
     
+    [self updateDateComponentsIfNeeded];
     [self updateDateRangeWithMinimumDate:_minimumDate maximumDate:_maximumDate];
     [self _reloadAnimated:NO];
 }
@@ -440,11 +442,11 @@
     if (hour > -1) {
         c.hour = hour;
     }
-
+    
     if (minute > -1) {
         c.minute = minute;
     }
-
+    
     [self _reloadAnimated:YES];
 }
 
@@ -552,4 +554,19 @@
         [self _selectedRow:[miniuts indexOfObject:@(self.dateComponents.minute)] inComponent:4 animated:animated];
     }
 }
+
+- (void)updateDateComponentsIfNeeded {
+    if (_minimumDate) {
+        if ([self.date compare:_minimumDate] == NSOrderedAscending) {
+            self.dateComponents = [_minimumDateComponents copy];
+        }
+    }
+    
+    if (_maximumDate) {
+        if ([self.date compare:_maximumDate] == NSOrderedDescending) {
+            self.dateComponents = [_maxmumDateComponents copy];
+        }
+    }
+}
+
 @end
